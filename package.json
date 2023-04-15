@@ -1,11 +1,16 @@
 {
   "name": "auth-service",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Auth service.",
+  "main": "./src/index.js",
+  "type": "module",
   "scripts": {
+    "dev": "node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
