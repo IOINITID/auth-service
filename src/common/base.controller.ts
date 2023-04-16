@@ -1,6 +1,6 @@
 import { Response, Router } from "express";
 import { LoggerService } from "../logger/logger.service";
-import { Route } from "./route.interface";
+import { IRoute } from "./route.interface";
 
 export abstract class BaseController {
   private readonly _router: Router;
@@ -26,7 +26,7 @@ export abstract class BaseController {
     return response.sendStatus(201);
   }
 
-  protected bindRoutes(routes: Route[]) {
+  protected bindRoutes(routes: IRoute[]) {
     for (const route of routes) {
       this.logger.log(`[${route.method}] ${route.path}`);
 
