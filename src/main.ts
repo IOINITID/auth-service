@@ -1,16 +1,30 @@
+import { Container, ContainerModule, interfaces } from "inversify";
 import { App } from "./app";
 import { ExeptionFilter } from "./errors/exeption.filter";
 import { LoggerService } from "./logger/logger.service";
 import { UsersController } from "./users/users.controller";
+import { ILoggerService } from "./logger/logger.service.interface";
+import { Types } from "./types";
+import { IUsersController } from "./users/users.controller.interface";
+import { IExeptionFilter } from "./errors/exeption.filter.interface";
 
-async function main() {
-  const logger = new LoggerService();
-  const app = new App(
-    logger,
-    new UsersController(logger),
-    new ExeptionFilter(logger)
-  );
-  await app.init();
+const containerModule = new ContainerModule((bind: interfaces.Bind) => {
+  bind<App>(Types.App).to(App);
+  bind<ILoggerService>(Types.ILoggerService).to(LoggerService);
+  bind<IUsersController>(Types.IUserController).to(UsersController);
+  bind<IExeptionFilter>(Types.IExeptionFilter).to(ExeptionFilter);
+});
+
+function main() {
+  const container = new Container();
+
+  container.load(containerModule);
+
+  const app = container.get<App>(Types.App);
+
+  app.init();
+
+  return { container, app };
 }
 
-main();
+export const { container, app } = main();
