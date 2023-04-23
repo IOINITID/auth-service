@@ -1,11 +1,11 @@
-import express, { Express } from "express";
-import { Server } from "node:http";
-import { ILoggerService } from "./logger/logger.service.interface";
-import { inject, injectable } from "inversify";
-import { Types } from "./types";
-import { IUsersController } from "./users/users.controller.interface";
-import { IExeptionFilter } from "./errors/exeption.filter.interface";
-import "reflect-metadata";
+import express, { Express } from 'express';
+import { Server } from 'node:http';
+import { ILoggerService } from './logger/logger.service.interface';
+import { inject, injectable } from 'inversify';
+import { Types } from './types';
+import { IUsersController } from './users/users.controller.interface';
+import { IExeptionFilter } from './errors/exeption.filter.interface';
+import 'reflect-metadata';
 
 @injectable()
 export class App {
@@ -22,15 +22,15 @@ export class App {
     this.port = 8000;
   }
 
-  private useRoutes() {
-    this.app.use("/users", this.usersController.router);
+  private useRoutes(): void {
+    this.app.use('/users', this.usersController.router);
   }
 
-  private useExeptionFilters() {
+  private useExeptionFilters(): void {
     this.app.use(this.exeptionFilter.catch.bind(this.exeptionFilter));
   }
 
-  public async init() {
+  public async init(): Promise<void> {
     this.useRoutes();
     this.useExeptionFilters();
     this.server = this.app.listen(this.port);
