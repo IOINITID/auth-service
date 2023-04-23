@@ -9,10 +9,14 @@ import 'reflect-metadata';
 import { UserLoginDTO } from './dto/user-login.dto';
 import { UserRegisterDTO } from './dto/user-register.dto';
 import { User } from './user.entiry';
+import { IUserService } from './user.service.interface';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
-  constructor(@inject(Types.ILoggerService) private loggerService: ILoggerService) {
+  constructor(
+    @inject(Types.ILoggerService) private loggerService: ILoggerService,
+    @inject(Types.IUserService) private userService: IUserService
+  ) {
     super(loggerService);
     this.bindRoutes([
       { path: '/register', method: 'post', handler: this.register },
@@ -30,10 +34,12 @@ export class UsersController extends BaseController implements IUsersController 
     response: Response,
     next: NextFunction
   ): Promise<void> {
-    const newUser = new User(request.body.email, request.body.name);
+    const result = await this.userService.createUser(request.body);
 
-    await newUser.setPassword(request.body.password);
+    if (!result) {
+      return next(new HTTPError(422, 'Такой пользователь уже существует'));
+    }
 
-    this.ok(response, newUser);
+    this.ok(response, { email: result.email });
   }
 }
