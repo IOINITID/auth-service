@@ -8,8 +8,8 @@ import { Types } from '../types';
 import 'reflect-metadata';
 import { UserLoginDTO } from './dto/user-login.dto';
 import { UserRegisterDTO } from './dto/user-register.dto';
-import { User } from './user.entiry';
 import { IUserService } from './user.service.interface';
+import { ValidateMiddlewate } from '../common/validate.middleware';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -19,7 +19,12 @@ export class UsersController extends BaseController implements IUsersController 
   ) {
     super(loggerService);
     this.bindRoutes([
-      { path: '/register', method: 'post', handler: this.register },
+      {
+        path: '/register',
+        method: 'post',
+        handler: this.register,
+        middlewares: [new ValidateMiddlewate(UserRegisterDTO)],
+      },
       { path: '/login', method: 'post', handler: this.login },
     ]);
   }
