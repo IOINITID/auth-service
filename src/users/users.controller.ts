@@ -6,6 +6,9 @@ import { inject, injectable } from 'inversify';
 import { ILoggerService } from '../logger/logger.service.interface';
 import { Types } from '../types';
 import 'reflect-metadata';
+import { UserLoginDTO } from './dto/user-login.dto';
+import { UserRegisterDTO } from './dto/user-register.dto';
+import { User } from './user.entiry';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -17,12 +20,20 @@ export class UsersController extends BaseController implements IUsersController 
     ]);
   }
 
-  public login(request: Request, response: Response, next: NextFunction): void {
+  public login(request: Request<{}, {}, UserLoginDTO>, response: Response, next: NextFunction): void {
     next(new HTTPError(401, 'Ошибка авторизации', 'login'));
     // this.ok(response, "Login");
   }
 
-  public register(request: Request, response: Response, next: NextFunction): void {
-    this.ok(response, 'Register');
+  public async register(
+    request: Request<{}, {}, UserRegisterDTO>,
+    response: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const newUser = new User(request.body.email, request.body.name);
+
+    await newUser.setPassword(request.body.password);
+
+    this.ok(response, newUser);
   }
 }

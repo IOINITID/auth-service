@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import { Types } from './types';
 import { IUsersController } from './users/users.controller.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
+import { json } from 'body-parser';
 import 'reflect-metadata';
 
 @injectable()
@@ -30,7 +31,12 @@ export class App {
     this.app.use(this.exeptionFilter.catch.bind(this.exeptionFilter));
   }
 
+  private useMiddleware(): void {
+    this.app.use(json());
+  }
+
   public async init(): Promise<void> {
+    this.useMiddleware();
     this.useRoutes();
     this.useExeptionFilters();
     this.server = this.app.listen(this.port);
